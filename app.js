@@ -8,6 +8,7 @@ const { checkUser, requireAuth } = require("./middlewares/auth.middleware");
 
 //ROUTES
 const userRoutes = require("./routes/user.routes");
+const postRoutes = require("./routes/post.routes");
 
 app.use((req, res, next) => {
 	res.setHeader("Access-Control-Allow-Origin", "*");
@@ -38,5 +39,6 @@ app.get("/jwtid", requireAuth, (req, res) => {
 
 //ROUTES
 app.use("/api/user", userRoutes);
+app.use("/api/post", postRoutes);
 
 module.exports = app;

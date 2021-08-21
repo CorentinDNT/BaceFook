@@ -27,7 +27,7 @@ exports.signIn = async (req, res) => {
 		res.status(200).json({ user: user._id });
 	} catch (err) {
 		const errors = signInErrors(err);
-		res.status(500).json(err);
+		res.status(500).json({ errors });
 	}
 };
 

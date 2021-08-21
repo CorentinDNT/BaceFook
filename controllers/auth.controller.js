@@ -1,5 +1,6 @@
 const UserModel = require("../models/user.model");
 const jwt = require("../middlewares/jwt.utils");
+const { signUpErrors, signInErrors } = require("../utils/error.utils");
 
 const maxAge = 24 * 60 * 60 * 1000;
 
@@ -11,9 +12,9 @@ exports.signUp = async (req, res) => {
 	try {
 		const user = await UserModel.create({ pseudo, email, password });
 		res.status(201).json({ user: user._id });
-	} catch (error) {
-		return res.status(500).json({ error });
-		//throw new Error("veuillez réessayer plus tard, post introuvable");
+	} catch (err) {
+		const errors = signUpErrors(err);
+		return res.status(500).json({ errors });
 	}
 };
 exports.signIn = async (req, res) => {
@@ -25,7 +26,8 @@ exports.signIn = async (req, res) => {
 		res.cookie("jwt", token, { httpOnly: true, maxAge });
 		res.status(200).json({ user: user._id });
 	} catch (err) {
-		res.status(500).json({ errors });
+		const errors = signInErrors(err);
+		res.status(500).json(err);
 	}
 };
 

@@ -1,44 +1,39 @@
-//MODULES
-const express = require("express");
-const app = express();
-const cookieParser = require("cookie-parser");
-require("dotenv").config({ path: "./config/.env" });
-require("./config/db");
-const { checkUser, requireAuth } = require("./middlewares/auth.middleware");
+// //MODULES
+// const express = require("express");
+// const app = express();
+// const cookieParser = require("cookie-parser");
+// require("dotenv").config({ path: "./config/.env" });
+// require("./config/db");
+// const { checkUser, requireAuth } = require("./middlewares/auth.middleware");
+// const cors = require("cors");
 
-//ROUTES
-const userRoutes = require("./routes/user.routes");
-const postRoutes = require("./routes/post.routes");
+// //ROUTES
+// const userRoutes = require("./routes/user.routes");
+// const postRoutes = require("./routes/post.routes");
 
-app.use((req, res, next) => {
-	res.setHeader("Access-Control-Allow-Origin", "*");
-	if (req.headers.origin) {
-		const origin = req.headers.origin;
-		res.setHeader("Access-Control-Allow-Origin", origin);
-	}
-	res.setHeader(
-		"Access-Control-Allow-Headers",
-		"Origin, X-Requested-With, Content, Accept, Content-Type, Authorization"
-	);
-	res.setHeader(
-		"Access-Control-Allow-Methods",
-		"GET, POST, PUT, DELETE, PATCH, OPTIONS"
-	);
-	next();
-});
+// //USE
+// // const corsOptions = {
+// //   origin: "http://localhost:3001",
+// //   credentials: true,
+// //   allowedHeaders: ["sessionId", "Content-Type"],
+// //   exposedHeaders: ["sessionId"],
+// //   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+// //   preflightContinue: false,
+// // };
 
-//USE
-app.use(express.json());
-app.use(cookieParser());
+// // app.use(cors(corsOptions));
 
-//JWT
-app.get("*", checkUser);
-app.get("/jwtid", requireAuth, (req, res) => {
-	res.status(200).send(res.locals.user._id);
-});
+// app.use(express.json());
+// app.use(cookieParser());
 
-//ROUTES
-app.use("/api/user", userRoutes);
-app.use("/api/post", postRoutes);
+// //JWT
+// app.get("*", checkUser);
+// app.get("/jwtid", requireAuth, (req, res) => {
+//   res.status(200).send(res.locals.user._id);
+// });
 
-module.exports = app;
+// //ROUTES
+// app.use("/api/user", userRoutes);
+// app.use("/api/post", postRoutes);
+
+// module.exports = app;

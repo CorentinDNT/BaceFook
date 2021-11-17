@@ -1,48 +1,38 @@
-const http = require("http");
-const app = require("./app");
+const express = require("express");
+const app = express();
+const cookieParser = require("cookie-parser");
+require("dotenv").config({ path: "./config/.env" });
+require("./config/db");
+const { checkUser, requireAuth } = require("./middlewares/auth.middleware");
+const cors = require("cors");
 
-const normalizePort = (val) => {
-	const port = parseInt(val, 10);
+//ROUTES
+const userRoutes = require("./routes/user.routes");
+const postRoutes = require("./routes/post.routes");
 
-	if (isNaN(port)) {
-		return val;
-	}
-	if (port >= 0) {
-		return port;
-	}
-	return false;
-};
-const port = normalizePort(process.env.PORT);
-app.set("port", port);
-
-const errorHandler = (error) => {
-	if (error.syscall !== "listen") {
-		throw error;
-	}
-	const address = server.address();
-	const bind =
-		typeof address === "string" ? "pipe " + address : "port: " + port;
-	switch (error.code) {
-		case "EACCES":
-			console.error(bind + " requires elevated privileges.");
-			process.exit(1);
-			break;
-		case "EADDRINUSE":
-			console.error(bind + " is already in use.");
-			process.exit(1);
-			break;
-		default:
-			throw error;
-	}
+const corsOptions = {
+  origin: "http://localhost:3000",
+  credentials: true,
+  allowedHeaders: ["sessionId", "Content-Type"],
+  exposedHeaders: ["sessionId"],
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  preflightContinue: false,
 };
 
-const server = http.createServer(app);
+app.use(cors(corsOptions));
+app.use(express.json());
+app.use(cookieParser());
 
-server.on("error", errorHandler);
-server.on("listening", () => {
-	const address = server.address();
-	const bind = typeof address === "string" ? "pipe " + address : "port " + port;
-	console.log("Listening on " + bind);
+//JWT
+app.get("*", checkUser);
+app.get("/jwtid", requireAuth, (req, res) => {
+  res.status(200).send(res.locals.user._id);
 });
 
-server.listen(port);
+//ROUTES
+app.use("/api/user", userRoutes);
+app.use("/api/post", postRoutes);
+
+app.listen(process.env.PORT, () => {
+  console.log(`Listening on port ${process.env.PORT}`);
+});
